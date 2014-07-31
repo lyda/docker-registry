@@ -88,6 +88,7 @@ class Storage(driver.Base):
     @lru.get
     def get_content(self, path):
         local_path, hdfs_path = self._init_path(path)
+        self._create_local(local_path)
         try:
             if not os.path.exists(local_path):
                     hadoopy.get(hdfs_path, local_path)
