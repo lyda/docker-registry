@@ -97,6 +97,7 @@ class Storage(driver.Base):
         except Exception as e:
             raise exceptions.FileNotFoundError('%s is not there (%s)'
                                                % (local_path, e.strerror))
+        print 'get: local: "%s"; hdfs: "%s"' % (local_path, hdfs_path)
 
         return d
 
@@ -108,10 +109,13 @@ class Storage(driver.Base):
             f.write(content)
         self._create_hdfs(hdfs_path)
         hdfs_putf(local_path, hdfs_path)
+        print 'put: local: "%s"; hdfs: "%s"' % (local_path, hdfs_path)
         return hdfs_path
 
     def stream_read(self, path, bytes_range=None):
         local_path, hdfs_path = self._init_path(path)
+        self._create_local(local_path)
+        print 'stream_read: local: "%s"; hdfs: "%s"' % (local_path, hdfs_path)
         nb_bytes = 0
         total_size = 0
         if not os.path.exists(local_path):
@@ -148,6 +152,7 @@ class Storage(driver.Base):
         # Size is mandatory
         local_path, hdfs_path = self._init_path(path)
         self._create_local(local_path)
+        print 'stream_write: local: "%s"; hdfs: "%s"' % (local_path, hdfs_path)
         with open(local_path, mode='wb') as f:
             try:
                 while True:
